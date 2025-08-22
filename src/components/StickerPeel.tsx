@@ -41,7 +41,7 @@ const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBa
   const pointLightFlippedRef = useRef<SVGFEPointLightElement>(null);
   const draggableInstanceRef = useRef<Draggable | null>(null);
 
-  const defaultPadding = 12;
+  const defaultPadding = 30;
 
   useEffect(() => {
     const target = dragTargetRef.current;
@@ -227,8 +227,8 @@ const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBa
   };
 
   return (
-    <div className={`absolute cursor-grab active:cursor-grabbing transform-gpu ${className}`} ref={dragTargetRef} style={cssVars}>
-      <div className='absolute top-0 left-0 h-fit bg-blue-500 z-10 px-1 text-xs  transition-width duration-300'>
+    <div className={`group absolute cursor-grab active:cursor-grabbing transform-gpu ${className}`} ref={dragTargetRef} style={cssVars}>
+      <div className='absolute top-0 left-0 h-fit bg-blue-500 z-10 px-1 text-xs duration-300 w-0 group-hover:w-fit transition-width '>
         <p className='hidden group-hover:block'>양나원</p>
       </div>
       <style
