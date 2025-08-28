@@ -17,6 +17,7 @@ interface StickerPeelProps {
   initialPosition?: 'center' | 'random' | { x: number; y: number };
   peelDirection?: number;
   className?: string;
+  label?: string;
 }
 
 interface CSSVars extends CSSProperties {
@@ -34,7 +35,7 @@ interface CSSVars extends CSSProperties {
   '--sticker-end'?: string;
 }
 
-const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBackHoverPct = 30, peelBackActivePct = 40, peelEasing = 'power3.out', peelHoverEasing = 'power2.out', width = 200, shadowIntensity = 0.6, lightingIntensity = 0.1, initialPosition = 'center', peelDirection = 0, className = '' }) => {
+const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBackHoverPct = 30, peelBackActivePct = 40, peelEasing = 'power3.out', peelHoverEasing = 'power2.out', width = 200, shadowIntensity = 0.6, lightingIntensity = 0.1, initialPosition = 'center', peelDirection = 0, className = '', label = '' }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const dragTargetRef = useRef<HTMLDivElement>(null);
   const pointLightRef = useRef<SVGFEPointLightElement>(null);
@@ -229,7 +230,7 @@ const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBa
   return (
     <div className={`group absolute cursor-grab active:cursor-grabbing transform-gpu ${className}`} ref={dragTargetRef} style={cssVars}>
       <div className='absolute top-0 left-0 h-fit bg-blue-500 z-10 px-1 text-xs duration-300 w-0 group-hover:w-fit transition-width '>
-        <p className='hidden group-hover:block'>양나원</p>
+        <p className='hidden group-hover:block'>{label}</p>
       </div>
       <style
         dangerouslySetInnerHTML={{
