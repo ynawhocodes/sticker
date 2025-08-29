@@ -1,4 +1,4 @@
-import { useRef, useEffect, useMemo, type CSSProperties } from 'react';
+import { useRef, useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { gsap } from 'gsap';
 import { Draggable } from 'gsap/Draggable';
 
@@ -12,9 +12,11 @@ interface StickerPeelProps {
   peelEasing?: string;
   peelHoverEasing?: string;
   width?: number;
+  mobileWidth?: number;
   shadowIntensity?: number;
   lightingIntensity?: number;
   initialPosition?: 'center' | 'random' | { x: number; y: number };
+  mobilePosition?: 'center' | 'random' | { x: number; y: number };
   peelDirection?: number;
   className?: string;
   label?: string;
@@ -28,6 +30,7 @@ interface CSSVars extends CSSProperties {
   '--sticker-peel-easing'?: string;
   '--sticker-peel-hover-easing'?: string;
   '--sticker-width'?: string;
+  '--sticker-mobile-width'?: string;
   '--sticker-shadow-opacity'?: number;
   '--sticker-lighting-constant'?: number;
   '--peel-direction'?: string;
@@ -35,7 +38,7 @@ interface CSSVars extends CSSProperties {
   '--sticker-end'?: string;
 }
 
-const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBackHoverPct = 30, peelBackActivePct = 40, peelEasing = 'power3.out', peelHoverEasing = 'power2.out', width = 200, shadowIntensity = 0.6, lightingIntensity = 0.1, initialPosition = 'center', peelDirection = 0, className = '', label = '' }) => {
+const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBackHoverPct = 30, peelBackActivePct = 40, peelEasing = 'power3.out', peelHoverEasing = 'power2.out', width = 200, mobileWidth = 120, shadowIntensity = 0.6, lightingIntensity = 0.1, initialPosition = 'center', mobilePosition = 'center', peelDirection = 0, className = '', label = '' }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const dragTargetRef = useRef<HTMLDivElement>(null);
   const pointLightRef = useRef<SVGFEPointLightElement>(null);
@@ -44,6 +47,18 @@ const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBa
 
   const defaultPadding = 30;
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   useEffect(() => {
     const target = dragTargetRef.current;
     if (!target) return;
@@ -51,17 +66,19 @@ const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBa
     let startX = 0,
       startY = 0;
 
-    if (initialPosition === 'center') {
+    const position = isMobile ? mobilePosition : initialPosition;
+
+    if (position === 'center') {
       return;
     }
 
-    if (typeof initialPosition === 'object' && initialPosition.x !== undefined && initialPosition.y !== undefined) {
-      startX = initialPosition.x;
-      startY = initialPosition.y;
+    if (typeof position === 'object' && position.x !== undefined && position.y !== undefined) {
+      startX = position.x;
+      startY = position.y;
     }
 
     gsap.set(target, { x: startX, y: startY });
-  }, [initialPosition]);
+  }, [initialPosition, mobilePosition, isMobile]);
 
   useEffect(() => {
     const target = dragTargetRef.current;
@@ -193,13 +210,14 @@ const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBa
       '--sticker-peel-easing': peelEasing,
       '--sticker-peel-hover-easing': peelHoverEasing,
       '--sticker-width': `${width}px`,
+      '--sticker-mobile-width': `${mobileWidth}px`,
       '--sticker-shadow-opacity': shadowIntensity,
       '--sticker-lighting-constant': lightingIntensity,
       '--peel-direction': `${peelDirection}deg`,
       '--sticker-start': `calc(-1 * ${defaultPadding}px)`,
       '--sticker-end': `calc(100% + ${defaultPadding}px)`,
     }),
-    [rotate, peelBackHoverPct, peelBackActivePct, peelEasing, peelHoverEasing, width, shadowIntensity, lightingIntensity, peelDirection, defaultPadding]
+    [rotate, peelBackHoverPct, peelBackActivePct, peelEasing, peelHoverEasing, width, mobileWidth, shadowIntensity, lightingIntensity, peelDirection, defaultPadding]
   );
 
   const stickerMainStyle: CSSProperties = {
@@ -219,7 +237,7 @@ const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBa
 
   const imageStyle: CSSProperties = {
     transform: `rotate(calc(${rotate}deg - ${peelDirection}deg))`,
-    width: `${width}px`,
+    width: isMobile ? `${mobileWidth}px` : `${width}px`,
   };
 
   const shadowImageStyle: CSSProperties = {
