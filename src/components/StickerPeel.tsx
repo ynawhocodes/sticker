@@ -48,6 +48,7 @@ const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBa
   const defaultPadding = 30;
 
   const [isMobile, setIsMobile] = useState(false);
+  const [showMobileLabel, setShowMobileLabel] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -201,6 +202,33 @@ const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBa
     };
   }, []);
 
+  // 모바일에서 라벨 표시 관련 이벤트 처리
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const handleStickerClick = (e: MouseEvent) => {
+      e.stopPropagation();
+      setShowMobileLabel((prev) => !prev);
+    };
+
+    const handleDocumentClick = () => {
+      setShowMobileLabel(false);
+    };
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('click', handleStickerClick as EventListener);
+      document.addEventListener('click', handleDocumentClick);
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener('click', handleStickerClick as EventListener);
+      }
+      document.removeEventListener('click', handleDocumentClick);
+    };
+  }, [isMobile]);
+
   const cssVars: CSSVars = useMemo(
     () => ({
       '--sticker-rotate': `${rotate}deg`,
@@ -247,8 +275,10 @@ const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBa
 
   return (
     <div className={`group absolute cursor-grab active:cursor-grabbing transform-gpu ${className}`} ref={dragTargetRef} style={cssVars}>
-      <div className='absolute top-0 left-0 h-fit bg-blue-500 z-10 px-1 text-xs duration-300 w-0 group-hover:w-fit transition-width '>
-        <p className='hidden group-hover:block'>{label}</p>
+      <div
+        className={`absolute top-0 left-0 h-fit bg-blue-500 z-10 px-1 text-xs duration-300 transition-all
+        ${isMobile ? (showMobileLabel ? 'w-fit' : 'w-0') : 'w-0 group-hover:w-fit transition-width'}`}>
+        <p className={`${isMobile ? (showMobileLabel ? 'block' : 'hidden') : 'hidden group-hover:block'}`}>{label}</p>
       </div>
       <style
         dangerouslySetInnerHTML={{
