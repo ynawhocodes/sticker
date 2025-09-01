@@ -38,14 +38,14 @@ interface CSSVars extends CSSProperties {
   '--sticker-end'?: string;
 }
 
-const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBackHoverPct = 30, peelBackActivePct = 40, peelEasing = 'power3.out', peelHoverEasing = 'power2.out', width = 200, mobileWidth = 120, shadowIntensity = 0.6, lightingIntensity = 0.1, initialPosition = 'center', mobilePosition = 'center', peelDirection = 0, className = '', label = '' }) => {
+const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBackHoverPct = 30, peelBackActivePct = 40, peelEasing = 'power3.out', peelHoverEasing = 'power2.out', width = 200, mobileWidth = 120, shadowIntensity = 0.2, lightingIntensity = 0.1, initialPosition = 'center', mobilePosition = 'center', peelDirection = 0, className = '', label = '' }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const dragTargetRef = useRef<HTMLDivElement>(null);
   const pointLightRef = useRef<SVGFEPointLightElement>(null);
   const pointLightFlippedRef = useRef<SVGFEPointLightElement>(null);
   const draggableInstanceRef = useRef<Draggable | null>(null);
 
-  const defaultPadding = 30;
+  const defaultPadding = 40;
 
   const [isMobile, setIsMobile] = useState(false);
   const [showMobileLabel, setShowMobileLabel] = useState(false);
@@ -324,7 +324,7 @@ const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBa
           </filter>
 
           <filter id='dropShadow'>
-            <feDropShadow dx='2' dy='4' stdDeviation={3 * shadowIntensity} floodColor='black' floodOpacity={shadowIntensity} />
+            <feDropShadow dx='2' dy='4' stdDeviation={6 * shadowIntensity} floodColor='black' floodOpacity={shadowIntensity} />
           </filter>
 
           <filter id='expandAndFill'>
