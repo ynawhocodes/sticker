@@ -20,6 +20,7 @@ interface StickerPeelProps {
   peelDirection?: number;
   className?: string;
   label?: string;
+  job: string;
 }
 
 interface CSSVars extends CSSProperties {
@@ -38,7 +39,7 @@ interface CSSVars extends CSSProperties {
   '--sticker-end'?: string;
 }
 
-const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBackHoverPct = 30, peelBackActivePct = 40, peelEasing = 'power3.out', peelHoverEasing = 'power2.out', width = 200, mobileWidth = 120, shadowIntensity = 0.2, lightingIntensity = 0.1, initialPosition = 'center', mobilePosition = 'center', peelDirection = 0, className = '', label = '' }) => {
+const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBackHoverPct = 30, peelBackActivePct = 40, peelEasing = 'power3.out', peelHoverEasing = 'power2.out', width = 200, mobileWidth = 120, shadowIntensity = 0.2, lightingIntensity = 0.1, initialPosition = 'center', mobilePosition = 'center', peelDirection = 0, className = '', label = '', job = '' }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const dragTargetRef = useRef<HTMLDivElement>(null);
   const pointLightRef = useRef<SVGFEPointLightElement>(null);
@@ -275,11 +276,19 @@ const StickerPeel: React.FC<StickerPeelProps> = ({ imageSrc, rotate = 30, peelBa
 
   return (
     <div className={`group absolute cursor-grab active:cursor-grabbing transform-gpu ${className}`} ref={dragTargetRef} style={cssVars}>
-      <div
-        className={`absolute top-0 left-0 h-fit bg-blue-500 z-10 px-1 text-xs duration-300 transition-all
-        ${isMobile ? (showMobileLabel ? 'w-fit' : 'w-0') : 'w-0 group-hover:w-fit transition-width'}`}>
-        <p className={`${isMobile ? (showMobileLabel ? 'block' : 'hidden') : 'hidden group-hover:block'}`}>{label}</p>
+      <div className='absolute top-0 left-0 h-fit z-10 text-xs duration-300 transition-all'>
+        <span
+          className={`bg-blue-500 px-1 block w-fit
+      ${isMobile ? (showMobileLabel ? '' : 'hidden') : 'hidden group-hover:block'}`}>
+          {label}
+        </span>
+        <span
+          className={`bg-blue-500 px-1 block w-fit ml-2
+      ${isMobile ? (showMobileLabel ? '' : 'hidden') : 'hidden group-hover:block'}`}>
+          {job}
+        </span>
       </div>
+
       <style
         dangerouslySetInnerHTML={{
           __html: `
